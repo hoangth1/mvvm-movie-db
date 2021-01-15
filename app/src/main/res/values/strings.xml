@@ -1,3 +1,5 @@
 <resources>
-    <string name="app_name">MovieDB Learning</string>
+    <string name="app_name">MovieDB</string>
+    <string name="message_share_app">Get more Lock screen style Among Us at: %s</string>
+    <string name="message_empty">""</string>
 </resources>
