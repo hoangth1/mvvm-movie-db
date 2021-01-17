@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <data>
+
+        <import type="com.hoang.moviedblearning.utils.ConstantsKt" />
+
+        <variable
+            name="item"
+            type="com.hoang.moviedblearning.data.model.Movie" />
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="@dimen/dp_200"
+        android:layout_height="@dimen/dp_250"
+        android:layout_marginEnd="@dimen/dp_15">
+
+        <androidx.appcompat.widget.AppCompatImageView
+            android:id="@+id/image_cover"
+            loadImage="@{ConstantsKt.BASE_IMAGE_URL+item.posterPath}"
+            android:layout_width="@dimen/dp_200"
+            android:layout_height="@dimen/dp_200"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="@dimen/dp_10"
+            android:ellipsize="end"
+            android:maxLines="1"
+            android:text="@{item.title}"
+            android:textColor="@color/white"
+            android:textSize="@dimen/sp_20"
+            app:layout_constraintEnd_toEndOf="@id/image_cover"
+            app:layout_constraintStart_toStartOf="@id/image_cover"
+            app:layout_constraintTop_toBottomOf="@id/image_cover" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

@@ -1,7 +1,11 @@
 package com.hoang.moviedblearning.di.module
 
 import com.hoang.moviedblearning.BuildConfig
+import com.hoang.moviedblearning.data.api.AppApi
 import com.hoang.moviedblearning.data.base.RxErrorHandlingCallAdapterFactory
+import com.hoang.moviedblearning.utils.BASE_URL
+import com.hoang.moviedblearning.utils.KEY
+import com.hoang.moviedblearning.utils.PARAM_API_KEY
 import dagger.Module
 import dagger.Provides
 import okhttp3.Interceptor
@@ -40,7 +44,22 @@ class NetworkModule {
 
     @Provides
     @Singleton
-    fun provideHttpClient(@Named("header") header: Interceptor): OkHttpClient {
+    fun provideApiKeyInterceptor(): Interceptor {
+        return Interceptor { chain ->
+            var request = chain.request()
+            val url = request.url.newBuilder().addQueryParameter(PARAM_API_KEY, KEY)
+                .build()
+            request = request.newBuilder().url(url).build()
+            chain.proceed(request)
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideHttpClient(
+        @Named("header") header: Interceptor,
+        apiKeyInterceptor: Interceptor
+    ): OkHttpClient {
         val clientBuilder = OkHttpClient.Builder()
         clientBuilder.connectTimeout(CONNECT_TIMEOUT, TimeUnit.SECONDS)
         clientBuilder.writeTimeout(WRITE_TIMEOUT, TimeUnit.SECONDS)
@@ -51,16 +70,24 @@ class NetworkModule {
             clientBuilder.addInterceptor(logging)
         }
         clientBuilder.addInterceptor(header)
+        clientBuilder.addInterceptor(apiKeyInterceptor)
         return clientBuilder.build()
     }
+
 
     @Provides
     @Singleton
     fun provideRetrofit(okHttpClient: OkHttpClient): Retrofit =
         Retrofit.Builder()
-            .baseUrl(BuildConfig.BASE_URL)
+            .baseUrl(BASE_URL)
             .client(okHttpClient)
             .addConverterFactory(GsonConverterFactory.create())
             .addCallAdapterFactory(RxErrorHandlingCallAdapterFactory.create())
             .build()
+
+    @Provides
+    @Singleton
+    fun provideAppApi(retrofit: Retrofit): AppApi {
+        return retrofit.create(AppApi::class.java)
+    }
 }
